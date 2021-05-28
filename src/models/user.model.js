@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const config = require("../config/config");
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Complete userSchema, a Mongoose schema for "users" collection
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -13,9 +13,21 @@ const userSchema = mongoose.Schema(
       trim: true,
     },
     email: {
+      type: String,
+      required: true,
+      unique:true,
+      trim: true,
+      lowercase: true,
+      validate(value){
+        if(!validator.isEmail(value)){
+          throw new Error("Invalid email")
+        }
+      }
     },
     password: {
       type: String,
+      required: true,
+      trim: true,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
           throw new Error(
@@ -25,6 +37,9 @@ const userSchema = mongoose.Schema(
       },
     },
     walletMoney: {
+      type: Number,
+      require: true,
+      default: config.default_wallet_money,
     },
     address: {
       type: String,
@@ -44,6 +59,13 @@ const userSchema = mongoose.Schema(
  * @returns {Promise<boolean>}
  */
 userSchema.statics.isEmailTaken = async function (email) {
+  this.findOne({"email":email}).then(match=>{
+    if(match){
+      return true
+    }else{
+      return false
+    }
+  })
 };
 
 
@@ -57,3 +79,5 @@ userSchema.statics.isEmailTaken = async function (email) {
 /**
  * @typedef User
  */
+const User = mongoose.model('User', userSchema);
+module.exports.User = User;

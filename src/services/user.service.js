@@ -2,7 +2,6 @@ const { User } = require("../models");
 const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 
-// TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement getUserById(id)
 /**
  * Get User by id
  * - Fetch user object from Mongo using the "_id" field and return user object
@@ -10,7 +9,8 @@ const ApiError = require("../utils/ApiError");
  * @returns {Promise<User>}
  */
 const getUserById = async(id)=>{
-    return User.findById(id)
+    const data = await User.findById(id);
+    return data
 }
 
 
@@ -22,7 +22,8 @@ const getUserById = async(id)=>{
  * @returns {Promise<User>}
  */
 const getUserByEmail = async(email)=>{
-    return User.findOne({email});
+    const data = await User.findOne({ email: email });
+    return data
 };
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement createUser(user)
